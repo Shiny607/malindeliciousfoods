@@ -94,12 +94,10 @@ function upd(){
   document.getElementById("go").disabled=t===0;
 }
 var CONFIG={
-  // 填入表單服務的網址(例如 Formspree 給你的 https://formspree.io/f/xxxx),客人送出後訂單就會自動寄到你的信箱。
-  // 留空的話,客人送出後會看到訂單明細,可複製或用 LINE 傳給你。
+  // 表單服務(Formspree)的網址,客人送出後訂單會自動寄到你的信箱。
   endpoint:"https://formspree.io/f/mbggklrk"
 };
-var text="";
-var done=false;
+var go=document.getElementById("go");
 document.getElementById("go").onclick=function(){
   var v=function(i){return document.getElementById(i).value.trim()};
   var err=document.getElementById("err");
@@ -107,33 +105,27 @@ document.getElementById("go").onclick=function(){
   err.textContent="";
   var lines=items.filter(function(it){return q[it.id]>0}).map(function(it){
     return it.name+" × "+q[it.id]+it.unit+"  "+fmt(q[it.id]*it.price)});
-  text="【訂單】\n"+lines.join("\n")+"\n合計:"+fmt(total())+"\n\n姓名:"+v("n")+"\n付款方式:匯款(永豐銀行 807,帳號 21001800118555)\n匯款後五碼:"+(v("z")||"尚未填寫");
+  var text="【訂單】\n"+lines.join("\n")+"\n合計:"+fmt(total())+"\n\n姓名:"+v("n")+"\n付款方式:匯款(永豐銀行 807,帳號 21001800118555)\n匯款後五碼:"+(v("z")||"尚未填寫");
   var s=document.getElementById("sum");
   s.textContent="";
   var status=document.createElement("p");status.style.margin="0 0 10px";status.style.fontWeight="500";
+  status.textContent="訂單送出中…";
   s.appendChild(status);
   s.appendChild(document.createTextNode(text));
-  s.appendChild(document.createElement("br"));
-  var c=document.createElement("button");c.className="copy";c.type="button";c.textContent="複製訂單";
-  c.onclick=function(){
-    try{navigator.clipboard.writeText(text).then(function(){c.textContent="已複製"},function(){c.textContent="請手動選取複製"})}
-    catch(e){c.textContent="請手動選取複製"}
-  };
-  var l=document.createElement("a");l.className="copy";l.style.display="inline-block";l.style.marginLeft="8px";l.style.textDecoration="none";
-  l.href="https://line.me/R/msg/text/?"+encodeURIComponent(text);l.target="_blank";l.rel="noopener";l.textContent="用 LINE 傳送";
-  s.appendChild(c);s.appendChild(l);
   s.className="sum on";
   s.scrollIntoView({behavior:"smooth",block:"center"});
-  if(CONFIG.endpoint){
-    if(done){status.textContent="訂單已送出,請勿重複送出。";return}
-    status.textContent="訂單送出中…";
-    fetch(CONFIG.endpoint,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
-      body:JSON.stringify({"姓名":v("n"),"訂單內容":text,"合計":fmt(total()),"匯款後五碼":v("z")||"尚未填寫"})})
-    .then(function(r){if(!r.ok)throw new Error("fail");done=true;status.textContent="訂單已送出,我們收到了。請依下方明細匯款。"})
-    .catch(function(){status.textContent="訂單沒有成功送出,請按「複製訂單」或「用 LINE 傳送」,把明細傳給我們。"});
-  }else{
-    status.textContent="請複製下方訂單明細傳給我們,完成訂購。";
-  }
+  go.disabled=true;
+  fetch(CONFIG.endpoint,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+    body:JSON.stringify({"姓名":v("n"),"訂單內容":text,"合計":fmt(total()),"匯款後五碼":v("z")||"尚未填寫"})})
+  .then(function(r){
+    if(!r.ok)throw new Error("fail");
+    status.textContent="訂單已送出,我們收到了。請依上方付款方式匯款,謝謝!";
+    go.textContent="已送出";
+  })
+  .catch(function(){
+    status.textContent="訂單沒有成功送出,請檢查網路後再按一次「送出訂單」;如果還是不行,請直接聯絡我們。";
+    go.disabled=false;
+  });
 };
 </script>
 </body>
