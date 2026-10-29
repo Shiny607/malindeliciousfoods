@@ -53,7 +53,7 @@ input,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--
 <label for="n">姓名</label><input id="n" autocomplete="name">
 
 <h2>付款方式</h2>
-<div class="pay"><strong>匯款</strong><br>永豐銀行(代號 807)<br>帳號:12101800719677</div>
+<div class="pay"><strong>匯款</strong><br>永豐銀行(代號 807)<br>帳號:21001800118555</div>
 <label for="z">匯款後五碼</label><input id="z" inputmode="numeric" maxlength="5" pattern="[0-9]*" autocomplete="off">
 <div class="err" id="err" role="alert"></div>
 
@@ -68,7 +68,7 @@ input,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--
 <script>
 var items=[
 {id:"fo",name:"佛跳牆",price:1650,unit:"份",per:"",desc:"多種珍貴食材慢火燉煮,開封加熱即可享用。"},
-{id:"rg",name:"肉羹",price:260,unit:"斤",per:"/斤",desc:"以斤計價,可依人數選購。"},
+{id:"rg",name:"肉羹",price:270,unit:"斤",per:"/斤",desc:"以斤計價,可依人數選購。"},
 {id:"xo",name:"頂級干貝XO醬",price:900,unit:"瓶",per:"/450ml",desc:"干貝絲絲分明,每瓶450ml。"}
 ];
 var q={};
@@ -96,7 +96,7 @@ function upd(){
 var CONFIG={
   // 填入表單服務的網址(例如 Formspree 給你的 https://formspree.io/f/xxxx),客人送出後訂單就會自動寄到你的信箱。
   // 留空的話,客人送出後會看到訂單明細,可複製或用 LINE 傳給你。
-  endpoint:""
+  endpoint:"https://formspree.io/f/mbggklrk"
 };
 var text="";
 var done=false;
@@ -107,7 +107,7 @@ document.getElementById("go").onclick=function(){
   err.textContent="";
   var lines=items.filter(function(it){return q[it.id]>0}).map(function(it){
     return it.name+" × "+q[it.id]+it.unit+"  "+fmt(q[it.id]*it.price)});
-  text="【訂單】\n"+lines.join("\n")+"\n合計:"+fmt(total())+"\n\n姓名:"+v("n")+"\n付款方式:匯款(永豐銀行 807,帳號 12101800719677)\n匯款後五碼:"+(v("z")||"尚未填寫");
+  text="【訂單】\n"+lines.join("\n")+"\n合計:"+fmt(total())+"\n\n姓名:"+v("n")+"\n付款方式:匯款(永豐銀行 807,帳號 21001800118555)\n匯款後五碼:"+(v("z")||"尚未填寫");
   var s=document.getElementById("sum");
   s.textContent="";
   var status=document.createElement("p");status.style.margin="0 0 10px";status.style.fontWeight="500";
