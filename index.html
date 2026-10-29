@@ -105,7 +105,8 @@ document.getElementById("go").onclick=function(){
   err.textContent="";
   var lines=items.filter(function(it){return q[it.id]>0}).map(function(it){
     return it.name+" × "+q[it.id]+it.unit+"  "+fmt(q[it.id]*it.price)});
-  var text="【訂單】\n"+lines.join("\n")+"\n合計:"+fmt(total())+"\n\n姓名:"+v("n")+"\n付款方式:匯款(永豐銀行 807,帳號 21001800118555)\n匯款後五碼:"+(v("z")||"尚未填寫");
+  var now=function(){var o={};new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Taipei",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()).forEach(function(x){o[x.type]=x.value});return o.year+"/"+o.month+"/"+o.day+" "+o.hour+":"+o.minute}();
+  var text="【訂單】\n"+lines.join("\n")+"\n合計:"+fmt(total())+"\n下單時間:"+now+"\n\n姓名:"+v("n")+"\n付款方式:匯款(永豐銀行 807,帳號 21001800118555)\n匯款後五碼:"+(v("z")||"尚未填寫");
   var s=document.getElementById("sum");
   s.textContent="";
   var status=document.createElement("p");status.style.margin="0 0 10px";status.style.fontWeight="500";
@@ -116,7 +117,7 @@ document.getElementById("go").onclick=function(){
   s.scrollIntoView({behavior:"smooth",block:"center"});
   go.disabled=true;
   fetch(CONFIG.endpoint,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
-    body:JSON.stringify({"姓名":v("n"),"訂單內容":text,"合計":fmt(total()),"匯款後五碼":v("z")||"尚未填寫"})})
+    body:JSON.stringify({"下單時間":now,"姓名":v("n"),"訂單內容":text,"合計":fmt(total()),"匯款後五碼":v("z")||"尚未填寫"})})
   .then(function(r){
     if(!r.ok)throw new Error("fail");
     status.textContent="訂單已送出,我們收到了。請依上方付款方式匯款,謝謝!";
